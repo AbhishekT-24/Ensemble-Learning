@@ -6,7 +6,8 @@ from sklearn.datasets import load_diabetes
 from sklearn.metrics import mean_squared_error
 from DecisionTree import DecisionTreeRegressor
 from sklearn.metrics import r2_score
-from sklearn import tree
+from sklearn import tree,ensemble
+from RandomForest import RandomForestClassifier
 import time
 
 
@@ -29,18 +30,46 @@ def accuracy(y_test, y_pred):
     return np.sum(y_test == y_pred) / len(y_test)
 
 acc = accuracy(y_test, predictions)
-print(f"The accuracy for the custom model is {acc} and the time taken is {end-start}")
+print(f"The accuracy for the custom DT model is {acc} and the time taken is {end-start}")
 
 #Measuring performance of sklearn decision tree classifier
 
 start = time.time()
-clf = tree.DecisionTreeClassifier(max_depth=10,random_state=42)
+clf = tree.DecisionTreeClassifier(random_state=42)
 clf.fit(X_train, y_train)
 predictions = clf.predict(X_test)
 end = time.time()
 
 acc = accuracy(y_test, predictions)
-print(f"The accuracy for the sklearn model is {acc} and the time taken is {end-start}")
+print(f"The accuracy for the sklearn DT model is {acc} and the time taken is {end-start}")
+
+
+
+#Measuring performance of custom random forest classifier
+
+start = time.time()
+clf = RandomForestClassifier()
+clf.fit(X_train, y_train)
+predictions = clf.predict(X_test)
+end = time.time()
+
+
+acc = accuracy(y_test, predictions)
+print(f"The accuracy for the custom RF model is {acc} and the time taken is {end-start}")
+
+#Measuring performance of sklearn random forest classifier
+
+start = time.time()
+clf = ensemble.RandomForestClassifier(max_depth=10,random_state=42)
+clf.fit(X_train, y_train)
+predictions = clf.predict(X_test)
+end = time.time()
+
+acc = accuracy(y_test, predictions)
+print(f"The accuracy for the sklearn RF model is {acc} and the time taken is {end-start}")
+
+
+
 
 
 

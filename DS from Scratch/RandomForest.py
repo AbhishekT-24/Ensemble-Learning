@@ -1,5 +1,6 @@
 from DecisionTree import DecisionTreeClassifier, DecisionTreeRegressor
 import numpy as np
+from collections import Counter
 
 class RandomForestClassifier:
     def __init__(self,n_trees=2, max_depth=100, min_samples_split=2, n_features=None):
