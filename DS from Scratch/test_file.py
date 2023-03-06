@@ -6,24 +6,43 @@ from sklearn.datasets import load_diabetes
 from sklearn.metrics import mean_squared_error
 from DecisionTree import DecisionTreeRegressor
 from sklearn.metrics import r2_score
+from sklearn import tree
+import time
 
 
 data = datasets.load_breast_cancer()
 X, y = data.data, data.target
 
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=1234
+    X, y, test_size=0.2, random_state=42
 )
 
+#Measuring performance of custom decision tree classifier
+
+start = time.time()
 clf = DecisionTreeClassifier(max_depth=10)
 clf.fit(X_train, y_train)
 predictions = clf.predict(X_test)
+end = time.time()
 
 def accuracy(y_test, y_pred):
     return np.sum(y_test == y_pred) / len(y_test)
 
 acc = accuracy(y_test, predictions)
-print(acc)
+print(f"The accuracy for the custom model is {acc} and the time taken is {end-start}")
+
+#Measuring performance of sklearn decision tree classifier
+
+start = time.time()
+clf = tree.DecisionTreeClassifier(max_depth=10,random_state=42)
+clf.fit(X_train, y_train)
+predictions = clf.predict(X_test)
+end = time.time()
+
+acc = accuracy(y_test, predictions)
+print(f"The accuracy for the sklearn model is {acc} and the time taken is {end-start}")
+
+
 
 #for regression task
 diabetes = load_diabetes()
@@ -41,6 +60,9 @@ dt.fit(X_train, y_train)
 y_pred = dt.predict(X_test)
 mse = mean_squared_error(y_test, y_pred)
 print("Mean squared error:", mse)
+
+#checking with the sklearn decision tree
+
 
 r2 = r2_score(y_test, y_pred)
 print("R2 score:", r2)
@@ -68,6 +90,8 @@ r2 = r2_score(y_test, y_pred)
 print("R2 score: Random Forrest", r2)
 
 
+
+#time complexity on small datasets and compare performances with the sklearn DT
 
 
 
