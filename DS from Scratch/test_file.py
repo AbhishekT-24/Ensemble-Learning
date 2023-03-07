@@ -7,7 +7,7 @@ from sklearn.metrics import mean_squared_error
 from DecisionTree import DecisionTreeRegressor
 from sklearn.metrics import r2_score
 from sklearn import tree,ensemble
-from RandomForest import RandomForestClassifier
+from RandomForest import RandomForestClassifier,RandomForestRegressor
 import time
 
 
@@ -69,11 +69,8 @@ acc = accuracy(y_test, predictions)
 print(f"The accuracy for the sklearn RF model is {acc} and the time taken is {end-start}")
 
 
-
-
-
-
 #for regression task
+
 diabetes = load_diabetes()
 X = diabetes.data
 y = diabetes.target
@@ -81,46 +78,64 @@ y = diabetes.target
 # Split the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Train a decision tree regressor on the training set
+# Train a decision tree regressor on the training set & Evaluate the model on the testing set
+start = time.time()
 dt = DecisionTreeRegressor(max_depth=3, min_samples_split=12)
 dt.fit(X_train, y_train)
-
-# Evaluate the model on the testing set
 y_pred = dt.predict(X_test)
-mse = mean_squared_error(y_test, y_pred)
-print("Mean squared error:", mse)
+end = time.time()
 
+
+mse = mean_squared_error(y_test, y_pred)
+print(f"The MSE for the custom DT Regressor model is {mse} and the time taken is {end-start}")
 #checking with the sklearn decision tree
 
 
 r2 = r2_score(y_test, y_pred)
-print("R2 score:", r2)
+print(f"The R2_Score for the custom DT Regressor model is {r2} and the time taken is {end-start}")
 
-#Random Forrest Implementation for Regression
-n_trees = 100
-forest = []
-for i in range(n_trees):
-    # Subsample the training data
-    idx = np.random.choice(X_train.shape[0], size=X_train.shape[0], replace=True)
-    X_train_sub = X_train[idx,:]
-    y_train_sub = y_train[idx]
-    # Create a decision tree regressor and fit it to the subsampled data
-    dt = DecisionTreeRegressor(max_depth=3, min_samples_split=6)
-    dt.fit(X_train_sub, y_train_sub)
-    # Add the decision tree to the forest
-    forest.append(dt)
+#Check this against SKLearn DT Regressor
+start = time.time()
+clf = tree.DecisionTreeRegressor(random_state=42)
+clf.fit(X_train, y_train)
+y_pred = clf.predict(X_test)
+end = time.time()
 
-# Evaluate the random forest on the testing set
-y_pred = np.zeros(X_test.shape[0])
-for dt in forest:
-    y_pred += dt.predict(X_test)
-y_pred /= n_trees
+mse = mean_squared_error(y_test, y_pred)
+print(f"The MSE for the SKlearn DT model is {mse} and the time taken is {end-start}")
+
 r2 = r2_score(y_test, y_pred)
-print("R2 score: Random Forrest", r2)
+print(f"The R2_Score for the Sklearn DT model is {r2} and the time taken is {end-start}")
+
+#Checking with the custom Random Forrest Regressor
+start = time.time()
+clf = RandomForestRegressor()
+clf.fit(X_train, y_train)
+y_pred = clf.predict(X_test)
+end = time.time()
+
+mse = mean_squared_error(y_test, y_pred)
+print(f"The MSE for the Custom RF DT Regressor model is {mse} and the time taken is {end-start}")
+
+r2 = r2_score(y_test, y_pred)
+print(f"The R2_Score for the Custom RF DT Regressor model is {r2} and the time taken is {end-start}")
+
+
+#Checking against SKlearn RF Regressor
+start = time.time()
+clf = ensemble.RandomForestRegressor(max_depth=10,random_state=42)
+clf.fit(X_train, y_train)
+y_pred = clf.predict(X_test)
+end = time.time()
+
+mse = mean_squared_error(y_test, y_pred)
+print(f"The MSE for the SKLearn RF DT Regressor model is {mse} and the time taken is {end-start}")
+
+r2 = r2_score(y_test, y_pred)
+print(f"The R2_Score for the SKLearn RF DT Regressor model is {r2} and the time taken is {end-start}")
 
 
 
-#time complexity on small datasets and compare performances with the sklearn DT
 
 
 

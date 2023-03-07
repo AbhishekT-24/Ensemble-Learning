@@ -50,3 +50,28 @@ class RandomForestClassifier:
         predictions = np.array([self._most_common_label(pred) for pred in tree_preds])
         return predictions
 
+class RandomForestRegressor:
+    def __init__(self, n_trees=10, max_depth=5, min_samples_split=2):
+        self.n_trees = n_trees
+        self.max_depth = max_depth
+        self.min_samples_split = min_samples_split
+        self.forest = []
+
+    def fit(self, X, y):
+        for i in range(self.n_trees):
+            # Subsample the training data
+            idx = np.random.choice(X.shape[0], size=X.shape[0], replace=True)
+            X_train_sub = X[idx,:]
+            y_train_sub = y[idx]
+            # Create a decision tree regressor and fit it to the subsampled data
+            dt = DecisionTreeRegressor(max_depth=self.max_depth, min_samples_split=self.min_samples_split)
+            dt.fit(X_train_sub, y_train_sub)
+            # Add the decision tree to the forest
+            self.forest.append(dt)
+
+    def predict(self, X):
+        y_pred = np.zeros(X.shape[0])
+        for dt in self.forest:
+            y_pred += dt.predict(X)
+        y_pred /= self.n_trees
+        return y_pred
