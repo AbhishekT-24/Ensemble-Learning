@@ -9,7 +9,8 @@ from sklearn.metrics import r2_score
 from sklearn import tree,ensemble
 from RandomForest import RandomForestClassifier,RandomForestRegressor
 import time
-
+from sklearn.tree import plot_tree
+import matplotlib.pyplot as plt
 
 data = datasets.load_breast_cancer()
 X, y = data.data, data.target
@@ -32,6 +33,11 @@ def accuracy(y_test, y_pred):
 acc = accuracy(y_test, predictions)
 print(f"The accuracy for the custom DT model is {acc} and the time taken is {end-start}")
 
+
+clf.visualize_tree(feature_names=data.feature_names)
+
+# dot.render('tree',format='png',view=True)
+
 #Measuring performance of sklearn decision tree classifier
 
 start = time.time()
@@ -42,6 +48,8 @@ end = time.time()
 
 acc = accuracy(y_test, predictions)
 print(f"The accuracy for the sklearn DT model is {acc} and the time taken is {end-start}")
+
+
 
 
 
@@ -133,6 +141,7 @@ print(f"The MSE for the SKLearn RF DT Regressor model is {mse} and the time take
 
 r2 = r2_score(y_test, y_pred)
 print(f"The R2_Score for the SKLearn RF DT Regressor model is {r2} and the time taken is {end-start}")
+
 
 
 

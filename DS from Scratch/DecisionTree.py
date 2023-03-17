@@ -1,6 +1,6 @@
 import numpy as np
 from collections import Counter
-
+from graphviz import Digraph
 
 class Node:
     '''
@@ -39,7 +39,7 @@ class DecisionTreeClassifier:
         self.n_features = n_features
         self.root = None
 
-    def fit(self,X,y):
+    def fit(self, X, y):
 
         self.n_features = X.shape[1] if not self.n_features else min(X.shape[1],self.n_features)
         self.root = self._grow_tree(X,y)
@@ -175,6 +175,37 @@ class DecisionTreeClassifier:
 
         return self._traverse_tree(x, node.right_node)
 
+    def visualize_tree(self, feature_names=None):
+        dot = Digraph()
+
+        def _add_nodes(node, parent_node=None):
+            if node is None:
+                return
+            if node.is_leaf_node():
+                # Add leaf node
+                label = f'class: {node.value}'
+                dot.node(str(node), label=label, shape='oval')
+                if parent_node is not None:
+                    dot.edge(str(parent_node), str(node), label='')
+
+            else:
+                # Add decision node
+                feature_name = ''
+                if feature_names is not None:
+                    feature_name = feature_names[node.feature]
+                label = f'{feature_name} <= {node.threshold:.2f}'
+                dot.node(str(node), label=label, shape='box')
+                # Recursively add child nodes
+                if parent_node is not None:
+                    dot.edge(str(parent_node), str(node), label='')
+            _add_nodes(node.left_node, node)
+            _add_nodes(node.right_node, node)
+
+        _add_nodes(self.root)
+        try:
+            dot.render('tree', format='png', view=True)
+        except Exception as e:
+            print(e)
 
 
 class DecisionTreeRegressor:
