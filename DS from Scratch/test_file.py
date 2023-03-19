@@ -96,6 +96,8 @@ end = time.time()
 
 mse = mean_squared_error(y_test, y_pred)
 print(f"The MSE for the custom DT Regressor model is {mse} and the time taken is {end-start}")
+
+dt.plot_tree(feature_names=data.feature_names)
 #checking with the sklearn decision tree
 
 

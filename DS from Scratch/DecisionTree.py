@@ -287,4 +287,28 @@ class DecisionTreeRegressor:
             y_pred.append(self._predict_sample(self.tree, x))
         return np.array(y_pred)
 
+    def plot_tree(self, feature_names=None):
+        dot = Digraph()
 
+        def add_nodes(tree, parent_node=None):
+            if isinstance(tree, float):
+                node_label = f"Value: {tree:.2f}"
+            else:
+                feature = tree["split_feature"]
+                if feature_names is not None:
+                    feature_name = feature_names[feature]
+                    node_label = f"{feature_name}\n<= {tree['split_value']:.2f}"
+                else:
+                    node_label = f"Feature {feature}\n<= {tree['split_value']:.2f}"
+
+                left_node = tree["left"]
+                right_node = tree["right"]
+                dot.node(str(id(tree)), node_label)
+                if parent_node is not None:
+                    dot.edge(str(id(parent_node)), str(id(tree)))
+
+                add_nodes(left_node, tree)
+                add_nodes(right_node, tree)
+
+        add_nodes(self.tree)
+        dot.render('regressortree',format='png',view=True)
